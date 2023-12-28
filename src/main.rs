@@ -59,25 +59,19 @@ fn product_of_two_cycle_lengths(graph: &mut UndirectedCsrGraph<usize>) -> Option
 
 fn solution(file: &str) -> Option<usize> {
     let edges = get_edges(file);
-    println!("{:?}", edges);
-    let base_graph: UndirectedCsrGraph<usize> = GraphBuilder::new().edges(edges.clone()).build();
-    let node_count = base_graph.node_count();
-    for i in 0..node_count {
-        for j in i+1..node_count {
-            for k in j+1..node_count {
+    let n_edges = edges.len();
+    for i in 0..n_edges {
+        for j in i+1..n_edges {
+            for k in j+1..n_edges {
                 let modified_edges = edges
                     .iter()
                     .filter(|(from, to)| 
-                        !(*from == i && *to == j) &&
-                        !(*from == j && *to == i) &&
-                        !(*from == j && *to == k) &&
-                        !(*from == k && *to == j) &&
-                        !(*from == i && *to == k) &&
-                        !(*from == k && *to == i)
+                        !(*from == edges[i].0 && *to == edges[i].1) &&
+                        !(*from == edges[j].0 && *to == edges[j].1) &&
+                        !(*from == edges[k].0 && *to == edges[k].1)
                     )
                     .map(|(from, to)| (*from, *to))
                     .collect::<Vec<(usize, usize)>>();
-                println!("{:?}", modified_edges);
                 let mut graph: UndirectedCsrGraph<usize> = GraphBuilder::new().edges(modified_edges).build();
                 if let Some(n) = product_of_two_cycle_lengths(&mut graph) {
                     return Some(n);
@@ -90,4 +84,5 @@ fn solution(file: &str) -> Option<usize> {
 
 fn main() {
     assert_eq!(solution("example.txt").unwrap(), 54);
+    assert_eq!(solution("input.txt").unwrap(), 0);
 }
